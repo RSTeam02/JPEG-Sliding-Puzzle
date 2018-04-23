@@ -7,4 +7,4 @@ Extend previous project (Image-Slicer) into a Sliding Puzzle game
 + if all tiles are placed right, return "solved" (compare order of elements)
 
 Test:
-https://rsteam02.github.io/Image-Slicer/
+https://rsteam02.github.io/JPEG-Sliding-Puzzle/
