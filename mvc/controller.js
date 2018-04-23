@@ -31,6 +31,7 @@ export class Controller{
 
         $("#undo").on("click", () =>{     
             $(".tile").remove();
+            $("#info").html("");
             this.sliceImg($("#row").val(), $("#col").val(), false);
         });
 
