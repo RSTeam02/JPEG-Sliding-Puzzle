@@ -25,7 +25,8 @@ export class Controller{
     btnListener(){
 
         $(".MxN").on("click", () =>{     
-            $(".tile").remove();         
+            $(".tile").remove();        
+            $("#info").html(""); 
             this.sliceImg($("#row").val(), $("#col").val(), false);
         });
 
@@ -36,6 +37,7 @@ export class Controller{
         });
 
         $("#rnd").on("click", () =>{
+            $("#info").html("");
             $(".tile").remove();            
             this.sliceImg($("#row").val(), $("#col").val(), true);
         });
