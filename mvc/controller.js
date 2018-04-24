@@ -5,7 +5,7 @@ import { TileMatrix } from "./tileMatrix.js";
 /**
  * @author sakaijun
  * 
- * + every image will be displayed by 640xH
+ * + every image will be displayed by standard resolution modes WxH dependent on browser window size
  * + (re)calculate height with ratio of width
  * + slice in rows and cols (rectangular too)
  * + add borders
@@ -20,6 +20,7 @@ export class Controller{
 
     constructor(){
         this.btnListener(); 
+        
     }
     
     btnListener(){
@@ -46,7 +47,7 @@ export class Controller{
             this.previewFile((res)=>{ 
                 $("#fullIMG").remove();
                 var e = $("<img id=\"fullIMG\" alt=\"\" />");
-                $('.puzzle').append(e);                
+                $('.puzzle').append(e);                                      
                 $(".tile").remove();    
                 $('#fullIMG').attr("src", res);
                 setTimeout(() => {            
@@ -124,9 +125,23 @@ export class Controller{
         let shuffled = shuffle.randomOrder(arr, rnd);      
         var img = document.getElementById('fullIMG');       
         $("#dimInfo").html(`Format: ${row}x${col}`); 
-        var width = 640;        
+        var width =640;
+
+        if(img.clientWidth > 640){
+            if(window.innerWidth >= 1920){
+                width = 1680;
+            }else if(window.innerWidth >= 1680){
+                width = 1280;
+            }else if(window.innerWidth >= 1280){
+                width = 1024;
+            }else{
+                width = 800;
+            }
+        }
+
         var ratio = img.clientWidth/width;
         var height = img.clientHeight/ratio;
+
         
         $('#fullIMG').css({ 
             "display": "none", 
@@ -157,19 +172,19 @@ export class Controller{
         }
 
         $('.tile').css({
-            "width": `${Math.round(width/col)-2}px`,
-            "height": `${Math.round(height/row)-2}px`,
+            "width": `${Math.floor(width/col)-2}px`,
+            "height": `${Math.floor(height/row)-2}px`,
             "float": "left",            
             "border": "1px solid black",
             "background-image":`url(${img.src})`,
-            "background-size": "640px auto"
+            "background-size": `${width}px ${height}px`
         });        
        
         for (var i =0; i<row; i++){
             tWidth =0;
             for (var j =0; j<col; j++){
                 $(`.tile.t${tNo}`).css({ 
-                    "background-position": `${Math.round(tWidth)}px ${Math.round(tHeight)}px` 
+                    "background-position": `${Math.floor(tWidth)}px ${Math.floor(tHeight)}px` 
                 });
                 $(`.tile.t${tNo}`).attr("value", "");   
                 tWidth -= (width/col);
