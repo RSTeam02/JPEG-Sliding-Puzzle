@@ -25,7 +25,7 @@ export class Controller{
     
     btnListener(){
 
-        $(".MxN").on("click", () =>{     
+        $(".MxN").on("click input", () =>{     
             $(".tile").remove();        
             $("#info").html(""); 
             this.sliceImg($("#row").val(), $("#col").val(), false);
