@@ -23,24 +23,37 @@ export class Controller{
         
     }
     
+    get row(){
+        return $("#row").val();
+    }
+
+    get col(){
+        return $("#col").val();
+    }
+
+    get img(){
+        return document.getElementById('fullIMG'); 
+    }
+
     btnListener(){
 
         $(".MxN").on("click input", () =>{     
             $(".tile").remove();        
             $("#info").html(""); 
-            this.sliceImg($("#row").val(), $("#col").val(), false);
+            this.sliceImg(false, true);
         });
 
         $("#undo").on("click", () =>{     
             $(".tile").remove();
             $("#info").html("");
-            this.sliceImg($("#row").val(), $("#col").val(), false);
+            this.sliceImg(false, true);
+            $(".tile").off("click");
         });
 
         $("#rnd").on("click", () =>{
             $("#info").html("");
             $(".tile").remove();            
-            this.sliceImg($("#row").val(), $("#col").val(), true);
+            this.sliceImg(true, false);
         });
 
         $("#readFile").on('change', () => {             
@@ -51,13 +64,13 @@ export class Controller{
                 $(".tile").remove();    
                 $('#fullIMG').attr("src", res);
                 setTimeout(() => {            
-                    this.sliceImg($("#row").val(), $("#col").val(), false);
+                    this.sliceImg(false, true);
                 }, 1000);              
             });
         });   
     }  
     //assign listener to every tile, swapping is only allowed when the next one is a gap
-    tileListener(img){
+    tileListener(){
         $(".tile").on("click", (e)=>{
             let curr = e.currentTarget.id;
             let coordClick = curr.split("");
@@ -74,15 +87,15 @@ export class Controller{
                     gapX = coordGap[0];
                     gapY = coordGap[1];                   
                     if (this.dist(clickX, clickY, gapX, gapY) == 1) {                        
-                        this.swapTile(x[i].id, curr, img);
-                        this.evaluate(x, img);                                               
+                        this.swapTile(x[i].id, curr);
+                        this.evaluate(x);                                               
                     }
                 }
             }    
         });
     }
     //check if all tiles placed right
-    evaluate(tile, img){
+    evaluate(tile){
         let tileLen = $("#row").val()*$("#col").val();
         let placedRight = 0;
         for(let j=0; j < tile.length; j++) {
@@ -90,7 +103,7 @@ export class Controller{
                 placedRight++; 
                 if(tileLen -1 == placedRight){
                     $("#info").html("Solved!");
-                    $(`.tile.t${tileLen-1}`).css({"background-image":`url(${img.src})`}); 
+                    $(`.tile.t${tileLen-1}`).css({"background-image":`url(${this.img.src})`}); 
                     $(".tile").off("click");                  
                 }                 
             }
@@ -117,15 +130,15 @@ export class Controller{
         }
     }
 
-    sliceImg(row, col, rnd){        
+    sliceImg(rnd, lastTile){        
         let tm = new TileMatrix();
-        let arr = tm.createTileMat(row, col);
+        let arr = tm.createTileMat(this.row, this.col);
         $('#fullIMG').css({ "display": "inline" });                          
         let shuffle = new Shuffle();
         let shuffled = shuffle.randomOrder(arr, rnd);      
-        var img = document.getElementById('fullIMG');       
-        $("#dimInfo").html(`Format: ${row}x${col}`); 
-        var width =img.clientWidth;
+              
+        $("#dimInfo").html(`Format: ${this.row}x${this.col}`); 
+        var width =this.img.clientWidth;
 
         
         if(window.innerWidth >= 1920){
@@ -145,8 +158,8 @@ export class Controller{
         }
         
 
-        var ratio = img.clientWidth/width;
-        var height = img.clientHeight/ratio;
+        var ratio = this.img.clientWidth/width;
+        var height = this.img.clientHeight/ratio;
 
         
         $('#fullIMG').css({ 
@@ -160,56 +173,58 @@ export class Controller{
             "height":`${height}px`    
         });
 
-        this.buildTile(width, height, row, col, shuffled, img)      
-        this.tileListener(img);
+        this.buildTile(width, height, shuffled, lastTile);      
+        this.tileListener();
     }
 
     //build Tiles of an image, the last one is always marked as "gap"
-    buildTile(width, height, row, col, shuffled, img){
+    buildTile(width, height, shuffled, lastTile){
         let k = 0;
         var tNo =0;
         var tWidth =0;
         var tHeight = 0;
-        for (let i = 0; i < row; i++){
-            for (let j = 0; j < col; j++){
+        for (let i = 0; i < this.row; i++){
+            for (let j = 0; j < this.col; j++){
                 $(".puzzle").append(`<div class="tile t${shuffled[k] - 1}" id="${i}${j}"></div>`);         
                 k++;
             }
         }
 
         $('.tile').css({
-            "width": `${Math.floor(width/col)-2}px`,
-            "height": `${Math.floor(height/row)-2}px`,
+            "width": `${Math.floor(width/this.col)-2}px`,
+            "height": `${Math.floor(height/this.row)-2}px`,
             "float": "left",            
             "border": "1px solid black",
-            "background-image":`url(${img.src})`,
+            "background-image":`url(${this.img.src})`,
             "background-size": `${width}px ${height}px`
         });        
        
-        for (var i =0; i<row; i++){
+        for (var i =0; i<this.row; i++){
             tWidth =0;
-            for (var j =0; j<col; j++){
+            for (var j =0; j<this.col; j++){
                 $(`.tile.t${tNo}`).css({ 
                     "background-position": `${Math.floor(tWidth)}px ${Math.floor(tHeight)}px` 
                 });
                 $(`.tile.t${tNo}`).attr("value", "");   
-                tWidth -= (width/col);
+                tWidth -= (width/this.col);
                 tNo++;
             }
-            tHeight -= (height/row);
+            tHeight -= (height/this.row);
         }
-        $(`.tile.t${row*col-1}`).css({"background-image":"none"});
-        $(`.tile.t${row*col-1}`).attr("value", "gap");
+        if(!lastTile){
+            $(`.tile.t${this.row*this.col-1}`).css({"background-image":"none"});
+            $(`.tile.t${this.row*this.col-1}`).attr("value", "gap");
+        }
     }
     //swap css properties of two tiles, the neighbour is always empty
-    swapTile(last, curr, img){
+    swapTile(last, curr){
         let gap = $(`#${last}`).css("background-position");
         let clicked= $(`#${curr}`).css("background-position");   
         let classTemp = $(`#${curr}`).attr("class");
         $(`#${curr}`).css({"background-position":gap, "background-image":"none"});
         $(`#${curr}`).attr("value", "gap");        
         $(`#${curr}`).attr("class",  $(`#${last}`).attr("class"));     
-        $(`#${last}`).css({"background-position":clicked, "background-image":`url(${img.src})`});        
+        $(`#${last}`).css({"background-position":clicked, "background-image":`url(${this.img.src})`});        
         $(`#${last}`).attr("value", "");        
         $(`#${last}`).attr("class", classTemp);
         

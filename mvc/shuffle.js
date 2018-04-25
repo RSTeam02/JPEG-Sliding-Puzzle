@@ -12,23 +12,10 @@ export class Shuffle {
         this.arr = [];
     }
 
-    previewOrder(arr) {
-        let previewArr = [];
-
-        for (let i = 0; i < arr.length; i++) {
-            previewArr[i] = []
-            for (let j = 0; j < arr[i].length; j++) {
-                previewArr[i][j] = arr[i][j].val;
-            }
-        }
-        //2 dim => 1 dim
-        return previewArr.join(",").split(",");
-    }
-
-
     randomOrder(arr, rnd) {
         this.arr = arr;
         var shuffled = [];
+        var k =0;
         if(rnd){
             do {
                 for (let i = 0; i < this.arr.length; i++) {
@@ -42,14 +29,15 @@ export class Shuffle {
                 }
             } while (!this.solvable(this.arr.length, this.arr[0].length));
         }
-        for (let i = 0; i < this.arr.length; i++) {
-            shuffled[i] = []
+        //2 dim => 1 dim 
+        for (let i = 0; i < this.arr.length; i++) {        
             for (let j = 0; j < this.arr[i].length; j++) {
-                shuffled[i][j] = this.arr[i][j].val;
+                shuffled[k] = this.arr[i][j].val;
+                k++;
             }
         }
-        //2 dim => 1 dim        
-        return shuffled.join(",").split(",");
+  
+        return shuffled;
     }
 
     //compare for testing
