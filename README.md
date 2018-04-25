@@ -2,8 +2,8 @@
 
 Extend previous project (Image-Slicer) into a Sliding Puzzle game
 
-+ tiles only moveable if shuffled
-+ return shuffled without split, join 
++ 26.04: tiles only moveable if shuffled
++ 26.04: return shuffled without split, join 
 + diagram added
 + 24.04: recalculate size of image raster dependent on browser window size
 + divide image into rows and columns (rectangular or square number of tiles)
