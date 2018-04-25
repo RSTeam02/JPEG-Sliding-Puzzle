@@ -125,19 +125,25 @@ export class Controller{
         let shuffled = shuffle.randomOrder(arr, rnd);      
         var img = document.getElementById('fullIMG');       
         $("#dimInfo").html(`Format: ${row}x${col}`); 
-        var width =640;
+        var width =img.clientWidth;
 
-        if(img.clientWidth > 640){
-            if(window.innerWidth >= 1920){
-                width = 1680;
-            }else if(window.innerWidth >= 1680){
-                width = 1280;
-            }else if(window.innerWidth >= 1280){
-                width = 1024;
-            }else{
-                width = 800;
-            }
+        
+        if(window.innerWidth >= 1920){
+            width = 1680;
+        }else if(window.innerWidth >= 1680){
+            width = 1280;
+        }else if(window.innerWidth >= 1280){
+            width = 1024;
+        }else if(window.innerWidth >= 1024){
+            width = 800;
+        }else if(window.innerWidth >= 800){
+            width = 640;
+        }else if(window.innerWidth >= 640){
+            width = 480;
+        }else{
+            width =320;
         }
+        
 
         var ratio = img.clientWidth/width;
         var height = img.clientHeight/ratio;
