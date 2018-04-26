@@ -57,15 +57,13 @@ export class Controller{
         });
 
         $("#readFile").on('change', () => {             
-            this.previewFile((res)=>{ 
-                $("#fullIMG").remove();
-                var e = $("<img id=\"fullIMG\" alt=\"\" />");
-                $('.puzzle').append(e);                                      
-                $(".tile").remove();    
-                $('#fullIMG').attr("src", res);
-                setTimeout(() => {            
-                    this.sliceImg(false, true);
-                }, 1000);              
+            this.previewFile((res)=>{        
+                $(".tile").remove();            
+                $('.puzzle').html('<img id="fullIMG"/>');                  
+                $('#fullIMG').attr("src", res); 
+                setTimeout(() => {
+                    this.sliceImg(false, true);  
+                }, 10);                                                        
             });
         });   
     }  
@@ -172,7 +170,7 @@ export class Controller{
             "width":`${width}px`,
             "height":`${height}px`    
         });
-
+        
         this.buildTile(width, height, shuffled, lastTile);      
         this.tileListener();
     }
