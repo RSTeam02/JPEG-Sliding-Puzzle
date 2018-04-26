@@ -1,7 +1,11 @@
-# Rectangular Sliding-Puzzle (JPEG)
+# Rectangular Sliding-Puzzle
 
 Extend previous project (Image-Slicer) into a Sliding Puzzle game
 
++ 27.04: removed settimeout for reading height, width from img tag, size is now retrieved from Image() 
++ 27.04: remove image tag for preview => create grid on the fly
++ 27.04: instead of removing tiles, overwrite whole puzzle class with (".puzzle").html(tileSet), when reloaded
++ 26.04: support for common image types (JPEG, TIFF, PNG, GIF)
 + 26.04: tiles only moveable if shuffled
 + 26.04: return shuffled without split, join 
 + diagram added

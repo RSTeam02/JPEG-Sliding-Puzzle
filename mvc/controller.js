@@ -19,8 +19,11 @@ import { TileMatrix } from "./tileMatrix.js";
 export class Controller{
 
     constructor(){
-        this.btnListener(); 
-        
+        this.btnListener();      
+        let previewImg = new Image(640, 480);
+        previewImg.src = "./images/IMG_0439.JPG";
+        this.img = previewImg;
+        this.sliceImg(false, true);
     }
     
     get row(){
@@ -31,39 +34,36 @@ export class Controller{
         return $("#col").val();
     }
 
+    set img(pic){
+        this.pic = pic;
+    }
+
     get img(){
-        return document.getElementById('fullIMG'); 
+        return this.pic; 
     }
 
     btnListener(){
 
-        $(".MxN").on("click input", () =>{     
-            $(".tile").remove();        
+        $(".MxN").on("click input", () =>{                    
             $("#info").html(""); 
             this.sliceImg(false, true);
         });
 
-        $("#undo").on("click", () =>{     
-            $(".tile").remove();
+        $("#undo").on("click", () =>{            
             $("#info").html("");
             this.sliceImg(false, true);
             $(".tile").off("click");
         });
 
         $("#rnd").on("click", () =>{
-            $("#info").html("");
-            $(".tile").remove();            
+            $("#info").html("");                       
             this.sliceImg(true, false);
         });
 
         $("#readFile").on('change', () => {             
-            this.previewFile((res)=>{        
-                $(".tile").remove();            
-                $('.puzzle').html('<img id="fullIMG"/>');                  
-                $('#fullIMG').attr("src", res); 
-                setTimeout(() => {
-                    this.sliceImg(false, true);  
-                }, 10);                                                        
+            this.previewFile((res)=>{          
+                this.img = res;               
+                this.sliceImg(false, true);                                                                     
             });
         });   
     }  
@@ -111,14 +111,17 @@ export class Controller{
     previewFile(cb) {
         var file = document.querySelector('input[type=file]').files[0];
         let reader = new FileReader();      
-
         try {
-            if (file.type !== 'image/jpeg') {
-                throw "not a jpeg image";
-            } else {
-                reader.onload = function() {
-                    cb(reader.result);
+            if (file.type == 'image/jpeg' || file.type == "image/gif" || file.type == "image/png" || file.type == "image/tiff") {
+                reader.onload = function() {                    
+                    let img = new Image();                    
+                    img.src = reader.result;
+                    img.onload = function() {                                          
+                        cb(img);
+                    }                 
                 }
+            } else {                
+                throw "not an image file";
             }
             if(file){
                 reader.readAsDataURL(file);
@@ -130,14 +133,12 @@ export class Controller{
 
     sliceImg(rnd, lastTile){        
         let tm = new TileMatrix();
-        let arr = tm.createTileMat(this.row, this.col);
-        $('#fullIMG').css({ "display": "inline" });                          
+        let arr = tm.createTileMat(this.row, this.col);                             
         let shuffle = new Shuffle();
-        let shuffled = shuffle.randomOrder(arr, rnd);      
-              
+        let shuffled = shuffle.randomOrder(arr, rnd);             
         $("#dimInfo").html(`Format: ${this.row}x${this.col}`); 
-        var width =this.img.clientWidth;
-
+        var width =this.img.width;
+        
         
         if(window.innerWidth >= 1920){
             width = 1680;
@@ -153,11 +154,10 @@ export class Controller{
             width = 480;
         }else{
             width =320;
-        }
-        
+        }        
 
-        var ratio = this.img.clientWidth/width;
-        var height = this.img.clientHeight/ratio;
+        var ratio = this.img.width/width;
+        var height = this.img.height/ratio;
 
         
         $('#fullIMG').css({ 
@@ -181,12 +181,14 @@ export class Controller{
         var tNo =0;
         var tWidth =0;
         var tHeight = 0;
+        var tileSet = "";
         for (let i = 0; i < this.row; i++){
             for (let j = 0; j < this.col; j++){
-                $(".puzzle").append(`<div class="tile t${shuffled[k] - 1}" id="${i}${j}"></div>`);         
+                tileSet += `<div class="tile t${shuffled[k] - 1}" id="${i}${j}"></div>`;                   
                 k++;
             }
         }
+        $(".puzzle").html(tileSet);  
 
         $('.tile').css({
             "width": `${Math.floor(width/this.col)-2}px`,
@@ -224,8 +226,7 @@ export class Controller{
         $(`#${curr}`).attr("class",  $(`#${last}`).attr("class"));     
         $(`#${last}`).css({"background-position":clicked, "background-image":`url(${this.img.src})`});        
         $(`#${last}`).attr("value", "");        
-        $(`#${last}`).attr("class", classTemp);
-        
+        $(`#${last}`).attr("class", classTemp);       
     }
 
     //return absolute distance
