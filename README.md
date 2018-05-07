@@ -1,6 +1,7 @@
 # Rectangular Sliding-Puzzle
 
 Extend previous project (Image-Slicer) into a Sliding Puzzle game
++ 08.05: prevent long if, else clauses by converting direction strings (top, bottom, left, right) into json, pass them directly  
 + 07.05: added css animations, related to shift direction 
 + 27.04: removed settimeout for reading height, width from img tag, size is now retrieved from Image() 
 + 27.04: remove image tag for preview => create grid on the fly

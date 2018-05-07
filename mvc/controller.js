@@ -62,7 +62,6 @@ export class Controller {
 
         $("#rnd").on("click", () => {
             $("#info").html("");
-            this.firstswapTile = true;
             this.sliceImg(true, false);
         });
 
@@ -221,37 +220,17 @@ export class Controller {
             $(`.tile.t${this.row * this.col - 1}`).attr("value", "gap");
         }
     }
+    
     //animate every tile related to direction
     tileAnimate(last, curr, direction) {
         let width = -parseInt($(`#${curr}`).css("width"));
-        let height = -parseInt($(`#${curr}`).css("height"));
-
-        if (direction == "top") {
-            $(`#${curr}`).animate({ "top": height }, () => {
-                $(`#${curr}`).css({ "top": "0px" });
-                this.swapTile(last, curr);
-            });
-        }
-        if (direction == "bottom") {
-            $(`#${curr}`).animate({ "bottom": height }, () => {
-                $(`#${curr}`).css({ "bottom": "0px" });
-                this.swapTile(last, curr);
-            });
-        }
-        if (direction == "left") {
-            $(`#${curr}`).animate({ "left": width }, () => {
-                $(`#${curr}`).css({ "left": "0px" });
-                this.swapTile(last, curr);
-            });
-        }
-        if (direction == "right") {
-            $(`#${curr}`).animate({ "right": width }, () => {
-                $(`#${curr}`).css({ "right": "0px" });
-                this.swapTile(last, curr);
-            });
-        }
-
+        let height = -parseInt($(`#${curr}`).css("height"));        
+        $(`#${curr}`).animate(JSON.parse(`{"${direction}": "${(direction == "top" || direction == "bottom") ? height : width}px"}`), () => {
+            $(`#${curr}`).css(JSON.parse(`{"${direction}": "0px"}`));
+            this.swapTile(last, curr);
+        });
     }
+
     //swap css properties of two tiles, the neighbour is always empty
     swapTile(last, curr) {
         let gap = $(`#${last}`).css("background-position");
@@ -272,26 +251,21 @@ export class Controller {
 
     //return absolute distance, direction
     dist(x1, y1, x2, y2) {
-
         let distProp = {
             direction: "",
             absDist: 0
         }
-
         if ((x1 - x2) === 1) {
             distProp.direction = "top";
-        }
-        if ((x1 - x2) === -1) {
+        } else if ((x1 - x2) === -1) {
             distProp.direction = "bottom";
-        }
-        if ((y1 - y2) === 1) {
+        } else if ((y1 - y2) === 1) {
             distProp.direction = "left";
-        }
-        if ((y1 - y2) === -1) {
+        } else {
             distProp.direction = "right";
         }
         distProp.absDist = Math.abs(x1 - x2) + Math.abs(y1 - y2);
-        
+
         return distProp;
     }
 }
