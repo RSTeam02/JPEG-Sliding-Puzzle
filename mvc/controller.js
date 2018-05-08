@@ -221,14 +221,21 @@ export class Controller {
         }
     }
     
-    //animate every tile related to direction
-    tileAnimate(last, curr, direction) {
+    //animate every tile related to direction    
+    tileAnimate(last, curr, direction) {        
         let width = -parseInt($(`#${curr}`).css("width"));
-        let height = -parseInt($(`#${curr}`).css("height"));        
-        $(`#${curr}`).animate(JSON.parse(`{"${direction}": "${(direction == "top" || direction == "bottom") ? height : width}px"}`), () => {
-            $(`#${curr}`).css(JSON.parse(`{"${direction}": "0px"}`));
+        let height = -parseInt($(`#${curr}`).css("height"));      
+        let wh =  (direction == "top" || direction == "bottom") ? height : width;
+        if($('#ani').prop('checked')){
+            $(`#${curr}`).animate(JSON.parse(`{"${direction}": "${wh}px"}`), 150, () => {
+                $(`#${curr}`).css(JSON.parse(`{"${direction}": "0px"}`));     
+                $(`#${curr}`).after(() =>{                
+                    this.swapTile(last, curr);
+                });                       
+            });
+        }else{
             this.swapTile(last, curr);
-        });
+        }
     }
 
     //swap css properties of two tiles, the neighbour is always empty
