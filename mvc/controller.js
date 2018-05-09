@@ -106,7 +106,7 @@ export class Controller {
                 placedRight++;
                 if (tileLen - 1 == placedRight) {
                     $("#info").html("Solved!");
-                    $(`.tile.t${tileLen - 1}`).css({ "background-image": `url(${this.img.src})` });
+                    $(`.tile.t${tileLen - 1}`).css({ "opacity": 1 });
                     $(".tile").off("click");
                 }
             }
@@ -216,26 +216,22 @@ export class Controller {
             tHeight -= (height / this.row);
         }
         if (!lastTile) {
-            $(`.tile.t${this.row * this.col - 1}`).css({ "background-image": "none" });
+            $(`.tile.t${this.row * this.col - 1}`).css({ "opacity": 0 });
             $(`.tile.t${this.row * this.col - 1}`).attr("value", "gap");
         }
     }
-    
+
     //animate every tile related to direction    
-    tileAnimate(last, curr, direction) {        
-        let width = -parseInt($(`#${curr}`).css("width"));
-        let height = -parseInt($(`#${curr}`).css("height"));      
-        let wh =  (direction == "top" || direction == "bottom") ? height : width;
-        if($('#ani').prop('checked')){
-            $(`#${curr}`).animate(JSON.parse(`{"${direction}": "${wh}px"}`), 150, () => {
-                $(`#${curr}`).css(JSON.parse(`{"${direction}": "0px"}`));     
-                $(`#${curr}`).after(() =>{                
-                    this.swapTile(last, curr);
-                });                       
-            });
-        }else{
-            this.swapTile(last, curr);
-        }
+    tileAnimate(last, curr, direction) {
+        let wh = (direction == "top" || direction == "bottom") ? $(`#${curr}`).css("height") : $(`#${curr}`).css("width");
+        jQuery.fx.off = !$('#ani').prop('checked');
+        $(`#${curr}`).animate(JSON.parse(`{"${direction}": "-${wh}"}`), 150, ()=> {
+            $(`#${curr}`).css(JSON.parse(`{"${direction}": "0px"}`));
+            $(`#${curr}`).after(() =>{
+                this.swapTile(last, curr);
+                this.evaluate(this.tile);                               
+            });            
+        });       
     }
 
     //swap css properties of two tiles, the neighbour is always empty
@@ -244,17 +240,15 @@ export class Controller {
         let clicked = $(`#${curr}`).css("background-position");
         let classTemp = $(`#${curr}`).attr("class");
         $(`#${curr}`).css({
-            "background-image": "none",
+            "opacity": 0,
             "background-position": gap
         });
         $(`#${curr}`).attr("value", "gap");
         $(`#${curr}`).attr("class", $(`#${last}`).attr("class"));
-        $(`#${last}`).css({ "background-position": clicked, "background-image": `url(${this.img.src})` });
+        $(`#${last}`).css({ "background-position": clicked, "opacity": 1 });
         $(`#${last}`).attr("value", "");
-        $(`#${last}`).attr("class", classTemp);
-        this.evaluate(this.tile);
-
-    }
+        $(`#${last}`).attr("class", classTemp);        
+    }   
 
     //return absolute distance, direction
     dist(x1, y1, x2, y2) {
