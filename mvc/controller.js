@@ -78,8 +78,8 @@ export class Controller {
         });
     }
 
-    aniSpeed(){
-        ($("#ani").prop('checked')) ? $(".speed").attr("disabled", false) : $(".speed").attr("disabled",true);
+    aniSpeed() {
+        ($("#ani").prop('checked')) ? $(".speed").attr("disabled", false) : $(".speed").attr("disabled", true);
     }
 
     //assign listener to every tile, swapping is only allowed when the next one is a gap
@@ -92,8 +92,6 @@ export class Controller {
             let gapX = 0;
             let gapY = 0;
             let coordGap = [];
-
-
             for (let i = 0; i < this.tile.length; i++) {
                 if ($(this.tile[i]).attr("value") === "gap") {
                     coordGap = this.tile[i].id.split("");
@@ -231,17 +229,22 @@ export class Controller {
         }
     }
 
-    //animate every tile related to direction    
+    //animate every tile related to direction disable listener, swap after completion reload listener   
     tileAnimate(last, curr, direction) {
         let wh = (direction == "top" || direction == "bottom") ? $(`#${curr}`).css("height") : $(`#${curr}`).css("width");
         jQuery.fx.off = !$('#ani').prop('checked');
-        $(`#${curr}`).animate(JSON.parse(`{"${direction}": "-${wh}"}`), $("input:radio[class='speed']:checked").val(), ()=> {
-            $(`#${curr}`).css(JSON.parse(`{"${direction}": ""}`));
-            $(`#${curr}`).after(() =>{
-                this.swapTile(last, curr);
-                this.evaluate(this.tile);                               
-            });            
-        });       
+        $(".tile").off();  
+        $(`#${curr}`).animate(JSON.parse(`{"${direction}": "-${wh}"}`), {
+            duration: $("input:radio[class='speed']:checked").val(),
+            complete: () => {
+                $(`#${curr}`).css(JSON.parse(`{"${direction}": ""}`));
+                $(`#${curr}`).after(() => {                   
+                    this.swapTile(last, curr);
+                    this.evaluate(this.tile);                    
+                    this.tileListener();
+                });
+            }
+        });
     }
 
     //swap css properties of two tiles, the neighbour is always empty
@@ -257,8 +260,8 @@ export class Controller {
         $(`#${curr}`).attr("class", $(`#${last}`).attr("class"));
         $(`#${last}`).css({ "background-position": clicked, "opacity": 1 });
         $(`#${last}`).attr("value", "");
-        $(`#${last}`).attr("class", classTemp);        
-    }   
+        $(`#${last}`).attr("class", classTemp);
+    }
 
     //return absolute distance, direction
     dist(x1, y1, x2, y2) {
