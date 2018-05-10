@@ -108,7 +108,7 @@ export class Controller {
     //check if all tiles placed right
     evaluate(tile) {
         let tileLen = $("#row").val() * $("#col").val();
-        let placedRight = 0;
+        let placedRight = 0;        
         for (let j = 0; j < tile.length; j++) {
             if (`tile t${j}` === tile[j].className) {
                 placedRight++;
@@ -240,8 +240,8 @@ export class Controller {
                 $(`#${curr}`).css(JSON.parse(`{"${direction}": ""}`));
                 $(`#${curr}`).after(() => {                   
                     this.swapTile(last, curr);
-                    this.evaluate(this.tile);                    
-                    this.tileListener();
+                    this.tileListener();                    
+                    this.evaluate(this.tile);                   
                 });
             }
         });
@@ -260,7 +260,7 @@ export class Controller {
         $(`#${curr}`).attr("class", $(`#${last}`).attr("class"));
         $(`#${last}`).css({ "background-position": clicked, "opacity": 1 });
         $(`#${last}`).attr("value", "");
-        $(`#${last}`).attr("class", classTemp);
+        $(`#${last}`).attr("class", classTemp);        
     }
 
     //return absolute distance, direction
