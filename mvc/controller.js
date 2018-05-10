@@ -20,6 +20,7 @@ export class Controller {
 
     constructor() {
         this.btnListener();
+        this.tileLock = false;
         let previewImg = new Image(640, 480);
         previewImg.src = "./images/IMG_0439.JPG";
         this.img = previewImg;
@@ -229,22 +230,24 @@ export class Controller {
         }
     }
 
-    //animate every tile related to direction disable listener, swap after completion reload listener   
+    //animate every tile related to direction (lock tiles), swap after completion (unlock tiles)   
     tileAnimate(last, curr, direction) {
-        let wh = (direction == "top" || direction == "bottom") ? $(`#${curr}`).css("height") : $(`#${curr}`).css("width");
-        jQuery.fx.off = !$('#ani').prop('checked');
-        $(".tile").off();  
-        $(`#${curr}`).animate(JSON.parse(`{"${direction}": "-${wh}"}`), {
-            duration: $("input:radio[class='speed']:checked").val(),
-            complete: () => {
-                $(`#${curr}`).css(JSON.parse(`{"${direction}": ""}`));
-                $(`#${curr}`).after(() => {                   
-                    this.swapTile(last, curr);
-                    this.tileListener();                    
-                    this.evaluate(this.tile);                   
-                });
-            }
-        });
+        let wh = (direction == "top" || direction == "bottom") ? $(`#${curr}`).css("height") : $(`#${curr}`).css("width");        
+        jQuery.fx.off = !$('#ani').prop('checked');         
+        if(!this.tileLock){
+            this.tileLock = true;
+            $(`#${curr}`).animate(JSON.parse(`{"${direction}": "-${wh}"}`), {
+                duration: $("input:radio[class='speed']:checked").val(),
+                complete: () => {
+                    $(`#${curr}`).css(JSON.parse(`{"${direction}": ""}`));
+                    $(`#${curr}`).after(() => {                   
+                        this.swapTile(last, curr);                 
+                        this.tileLock = false;                   
+                        this.evaluate(this.tile);                   
+                    });
+                }
+            });
+        }
     }
 
     //swap css properties of two tiles, the neighbour is always empty

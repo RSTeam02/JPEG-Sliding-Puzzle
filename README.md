@@ -1,7 +1,7 @@
 # Rectangular Sliding-Puzzle
 
 Extend previous project (Image-Slicer) into a Sliding Puzzle game
-+ 10.05: lock/unlock tile listeners, during/after animation
++ 10.05: (re)load tile listeners, during/after animation => better solution: lock tiles when animation starts, unlock tiles when animation ends  
 + 10.05: fixed animation lags at some tile positions by replacing "0px" with "" (direction resets) 
 + 10.05: added speed modes fast and slow  
 + 08.05: prevent long if, else clauses by converting direction strings (top, bottom, left, right) into json, pass them directly  
