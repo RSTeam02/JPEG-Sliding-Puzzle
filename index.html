@@ -22,15 +22,19 @@
             </fieldset>           
             <fieldset>
                 <legend id="dimInfo">Format:</legend>
-                Rows: <input class="MxN" type="range" min="2" max="10" value="2" id="row">
-                Cols: <input class="MxN" type="range" min="2" max="10" value="2" id="col">
+                Rows: <input class="MxN" type="range" min="2" max="10" value="2" id="row" />
+                Cols: <input class="MxN" type="range" min="2" max="10" value="2" id="col" />
             </fieldset>
             <fieldset>
                 <legend>Shuffle Tiles</legend>
-                <input type = "button" id="rnd" value ="shuffle">
-                <input type = "button" id="undo" value ="reset">
-                <br>animate:
-                <input type = "checkbox" id="ani">
+                <input type = "button" id="rnd" value ="shuffle" />
+                <input type = "button" id="undo" value ="reset" />
+                <br>animate
+                <input type = "checkbox" id="ani" />
+                fast
+                <input type='radio' class='speed' id='speed1' name='speed' value='fast' checked/>
+                slow
+                <input type='radio' class='speed' id='speed2' name='speed' value='slow' />             
             </fieldset>            
         </form>
         <div id="info"></div>

@@ -1,6 +1,8 @@
 # Rectangular Sliding-Puzzle
 
 Extend previous project (Image-Slicer) into a Sliding Puzzle game
++ 10.05: fixed animation lags at some tile positions by replacing "0px" with "" (direction resets) 
++ 10.05: added speed modes fast and slow  
 + 08.05: prevent long if, else clauses by converting direction strings (top, bottom, left, right) into json, pass them directly  
 + 07.05: added css animations, related to shift direction 
 + 27.04: removed settimeout for reading height, width from img tag, size is now retrieved from Image() 

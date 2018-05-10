@@ -24,6 +24,7 @@ export class Controller {
         previewImg.src = "./images/IMG_0439.JPG";
         this.img = previewImg;
         this.sliceImg(false, true);
+        this.aniSpeed();
 
     }
 
@@ -71,7 +72,16 @@ export class Controller {
                 this.sliceImg(false, true);
             });
         });
+
+        $("#ani").on("click", () => {
+            this.aniSpeed();
+        });
     }
+
+    aniSpeed(){
+        ($("#ani").prop('checked')) ? $(".speed").attr("disabled", false) : $(".speed").attr("disabled",true);
+    }
+
     //assign listener to every tile, swapping is only allowed when the next one is a gap
     tileListener() {
         $(".tile").on("click", (e) => {
@@ -225,8 +235,8 @@ export class Controller {
     tileAnimate(last, curr, direction) {
         let wh = (direction == "top" || direction == "bottom") ? $(`#${curr}`).css("height") : $(`#${curr}`).css("width");
         jQuery.fx.off = !$('#ani').prop('checked');
-        $(`#${curr}`).animate(JSON.parse(`{"${direction}": "-${wh}"}`), 150, ()=> {
-            $(`#${curr}`).css(JSON.parse(`{"${direction}": "0px"}`));
+        $(`#${curr}`).animate(JSON.parse(`{"${direction}": "-${wh}"}`), $("input:radio[class='speed']:checked").val(), ()=> {
+            $(`#${curr}`).css(JSON.parse(`{"${direction}": ""}`));
             $(`#${curr}`).after(() =>{
                 this.swapTile(last, curr);
                 this.evaluate(this.tile);                               
