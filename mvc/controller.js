@@ -21,8 +21,10 @@ export class Controller {
     constructor() {
         this.btnListener();
         this.tileLock = false;
+        let imgArr = [ "./images/ani.gif", "./images/IMG_0536.JPG", "./images/IMG_0548.JPG", "./images/IMG_0556.JPG"];
+        let rnd = Math.floor(Math.random() * imgArr.length);
         let previewImg = new Image(640, 480);
-        previewImg.src = "./images/IMG_0439.JPG";
+        previewImg.src = imgArr[rnd];
         this.img = previewImg;
         this.sliceImg(false, true);
         this.aniSpeed();

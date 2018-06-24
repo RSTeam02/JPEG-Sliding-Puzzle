@@ -1,6 +1,7 @@
 # Rectangular Sliding-Puzzle
 
 Extend previous project (Image-Slicer) into a Sliding Puzzle game
++ 24.06: additional preview images added random selection, when restarted (F5)
 + 10.05: (re)load tile listeners, during/after animation => better solution: lock tiles when animation starts, unlock tiles when animation ends  
 + 10.05: fixed animation lags at some tile positions by replacing "0px" with "" (direction resets) 
 + 10.05: added speed modes fast and slow  
