@@ -21,12 +21,14 @@ export class Controller {
     constructor() {
         this.btnListener();
         this.tileLock = false;
-        let imgArr = [ "./images/starpoly13.gif", "./images/IMG_0536.JPG", "./images/IMG_0548.JPG", "./images/IMG_0556.JPG"];
+        let imgArr = ["./images/starpoly13.gif", "./images/IMG_0536.JPG", "./images/IMG_0548.JPG", "./images/IMG_0556.JPG"];
         let rnd = Math.floor(Math.random() * imgArr.length);
-        let previewImg = new Image(640, 480);
+        let previewImg = new Image();
         previewImg.src = imgArr[rnd];
-        this.img = previewImg;
-        this.sliceImg(false, true);
+        previewImg.onload = (e) => {       
+            this.img = previewImg;
+            this.sliceImg(false, true);
+        }       
         this.aniSpeed();
 
     }
@@ -111,7 +113,7 @@ export class Controller {
     //check if all tiles placed right
     evaluate(tile) {
         let tileLen = $("#row").val() * $("#col").val();
-        let placedRight = 0;        
+        let placedRight = 0;
         for (let j = 0; j < tile.length; j++) {
             if (`tile t${j}` === tile[j].className) {
                 placedRight++;
@@ -234,18 +236,18 @@ export class Controller {
 
     //animate every tile related to direction (lock tiles), swap after completion (unlock tiles)   
     tileAnimate(last, curr, direction) {
-        let wh = (direction == "top" || direction == "bottom") ? $(`#${curr}`).css("height") : $(`#${curr}`).css("width");        
-        jQuery.fx.off = !$('#ani').prop('checked');         
-        if(!this.tileLock){
+        let wh = (direction == "top" || direction == "bottom") ? $(`#${curr}`).css("height") : $(`#${curr}`).css("width");
+        jQuery.fx.off = !$('#ani').prop('checked');
+        if (!this.tileLock) {
             this.tileLock = true;
             $(`#${curr}`).animate(JSON.parse(`{"${direction}": "-${wh}"}`), {
                 duration: $("input:radio[class='speed']:checked").val(),
                 complete: () => {
                     $(`#${curr}`).css(JSON.parse(`{"${direction}": ""}`));
-                    $(`#${curr}`).after(() => {                   
-                        this.swapTile(last, curr);                 
-                        this.tileLock = false;                   
-                        this.evaluate(this.tile);                   
+                    $(`#${curr}`).after(() => {
+                        this.swapTile(last, curr);
+                        this.tileLock = false;
+                        this.evaluate(this.tile);
                     });
                 }
             });
@@ -265,7 +267,7 @@ export class Controller {
         $(`#${curr}`).attr("class", $(`#${last}`).attr("class"));
         $(`#${last}`).css({ "background-position": clicked, "opacity": 1 });
         $(`#${last}`).attr("value", "");
-        $(`#${last}`).attr("class", classTemp);        
+        $(`#${last}`).attr("class", classTemp);
     }
 
     //return absolute distance, direction
