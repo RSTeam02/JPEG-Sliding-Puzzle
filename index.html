@@ -1,46 +1,69 @@
 <!doctype html>
 <html>
 
-    <head>
-        <meta charset="utf-8">
-        <title></title>
-        <style>     
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+       
+        #cssContent:before {
+            content: attr(content);
+        }
 
-        </style>
-    </head>
-
-    <body>
-        <h2>Rectangular Sliding-Puzzle</h2>
-        <div class="puzzle">                
-        </div>
-        <br>
-        <form>
-            
-            <fieldset>
-                <legend>Select JPEG, TIFF, PNG or GIF</legend>
-                <input type="file" id="readFile">
-            </fieldset>           
-            <fieldset>
-                <legend id="dimInfo">Format:</legend>
-                Rows: <input class="MxN" type="range" min="2" max="10" value="2" id="row" />
-                Cols: <input class="MxN" type="range" min="2" max="10" value="2" id="col" />
-            </fieldset>
-            <fieldset>
-                <legend>Shuffle Tiles</legend>
-                <input type = "button" id="rnd" value ="shuffle" />
-                <input type = "button" id="undo" value ="reset" />
-                <br>animate
-                <input type = "checkbox" id="ani" />
-                fast
-                <input type='radio' class='speed' id='speed1' name='speed' value='fast' checked/>
-                slow
-                <input type='radio' class='speed' id='speed2' name='speed' value='slow' />             
-            </fieldset>            
-        </form>
-        <div id="info"></div>
-        <script src = "https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="import/class.js" type="module"></script>
+        #cssContent {
+            display: none;
+        }
         
-    </body>
+        #container {
+            width: 100%;            
+        }
+
+        #utfRaster {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Rectangular Sliding-Puzzle</h2>
+
+    <div class="puzzle">
+    </div>
+    <br>
+    <form>
+        <fieldset>
+            <legend id="utfBlock">
+                UTF-Block
+            </legend>
+            <input class="utfBlk" type="radio" id="smilies" name="sel1" checked/>Smilies
+            <input class="utfBlk" type="radio" id="pictograms" name="sel1" />Pictograms
+            <input class="utfBlk" type="radio" id="custom" name="sel1" />UTF-Range
+            <input type="text" id="utfFromTo" placeholder="eg. 3040-309F" />
+        </fieldset>
+        <fieldset>
+            <legend>Select JPEG, TIFF, PNG or GIF</legend>
+            <input type="file" id="readFile">
+        </fieldset>
+        <fieldset>
+            <legend id="dimInfo">Format:</legend>
+            Rows:
+            <input class="MxN" type="range" min="2" max="10" value="2" id="row" /> Cols:
+            <input class="MxN" type="range" min="2" max="10" value="2" id="col" />
+        </fieldset>
+        <fieldset>
+            <legend>Shuffle Tiles</legend>
+            <input type="button" id="rnd" value="shuffle" />
+            <input type="button" id="undo" value="reset" />
+            <br>animate
+            <input type="checkbox" id="ani" /> fast
+            <input type='radio' class='speed' id='speed1' name='speed' value='fast' checked/> slow
+            <input type='radio' class='speed' id='speed2' name='speed' value='slow' />
+        </fieldset>
+    </form>
+    <div id="info"></div>
+    <script src="../jquery-3.2.1.min.js"></script>
+    <script src="import/class.js" type="module"></script>
+
+</body>
 
 </html>

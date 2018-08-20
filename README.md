@@ -1,6 +1,8 @@
 # Rectangular Sliding-Puzzle
 
 Extend previous project (Image-Slicer) into a Sliding Puzzle game
++ 20.08: use unicode symbols, pictograms as puzzle layout (reused from previous project) choose one from "unicode-gallery"=> convert into a canvas image to slice in pieces
++ 20.08: center whole canvas
 + 24.06: additional preview images added random selection, when restarted (F5)
 + 10.05: (re)load tile listeners, during/after animation => better solution: lock tiles when animation starts, unlock tiles when animation ends  
 + 10.05: fixed animation lags at some tile positions by replacing "0px" with "" (direction resets) 

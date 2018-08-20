@@ -21,16 +21,134 @@ export class Controller {
     constructor() {
         this.btnListener();
         this.tileLock = false;
-        let imgArr = ["./images/starpoly13.gif", "./images/IMG_0536.JPG", "./images/IMG_0548.JPG", "./images/IMG_0556.JPG"];
-        let rnd = Math.floor(Math.random() * imgArr.length);
+        $(".puzzle").before('<canvas id ="cssContent" width="640" height="640"></canvas>');
+        this.resize();
+        this.resizeListener();
+        this.utfBlockListener();
+        this.rangeListener();
+        this.initRaster();
+        this.keyListener();
+        this.aniSpeed();
+    }
+
+    keyListener() {
+        $("#utfFromTo").on("keydown", (e) => {
+            if (e.keyCode === 13) {
+                this.initRaster();
+            }
+        });
+    }
+
+    initRaster() {
+        let block = this.utfSelect();
+        let codePoint = block.from + Math.floor(Math.random() * block.len);
+        $("#cssContent").attr("content", String.fromCodePoint(codePoint));
+        this.loadRaster(block);
+        this.utfRasterListener();
+        this.unicodeLoader(codePoint);
+    }
+
+    utfBlockListener() {
+        $(".utfBlk").on("click", () => {
+            let block = this.utfSelect();
+            $("#uc").attr("min", block.from);
+            $("#uc").attr("max", block.to);
+            $("#uc").attr("value", block.from);
+            $("#utfRaster").css({ "display": "block" });
+            this.loadRaster(block);
+            this.utfRasterListener();
+        });
+    }
+
+    utfRasterListener() {
+        $(".icon").on("click", (e) => {
+            let codePoint = parseInt($(e.target).attr("value"));
+            $("#cssContent").attr("content", String.fromCodePoint(codePoint));
+            this.unicodeLoader(codePoint);
+        });
+
+    }
+
+    unicodeLoader(codePoint) {
+        var imgCtx = document.getElementById('cssContent').getContext('2d');
+        imgCtx.clearRect(0, 0, 640, 640);
+        imgCtx.font = "640px serif";
+        imgCtx.fillText(String.fromCodePoint(codePoint), 0, 560);
         let previewImg = new Image();
-        previewImg.src = imgArr[rnd];
-        previewImg.onload = (e) => {       
+        previewImg.src = imgCtx.canvas.toDataURL();
+        previewImg.onload = (e) => {
             this.img = previewImg;
             this.sliceImg(false, true);
-        }       
-        this.aniSpeed();
+        }
+    }
 
+    resizeListener() {
+        $(window).resize(() => {
+            this.resize();
+        });
+    }
+
+    rangeListener() {
+        $(".option").on("input", (e) => {
+            let font;
+            let ucode = $("#uc").val();
+            font = ($("#sans").prop('checked')) ? "serif" : "sans-serif";
+            $("#cssContent").css("font-family", font);
+            $("#cssContent").attr("content", String.fromCodePoint(ucode));
+        });
+    }
+
+    resize() {
+        var height = $(window).height();
+        var width = $(window).width();
+        var size = 0;
+        size = (height > width) ? window.innerWidth : window.innerHeight
+        $("#cssContent").css("font-size", size);
+    }
+
+    utfSelect() {
+        let emojiBlock = {
+            from: 0x1F600,
+            to: 0x1F64F,
+            len: Number(0x1F64F) - Number(0x1F600)
+        }
+        let pictoBlock = {
+            from: 0x1F300,
+            to: 0x1F5FF,
+            len: Number(0x1F5FF) - Number(0x1F300)
+        }
+        let userRange = $("#utfFromTo").val().split("-");
+        let utfRange = {
+            from: Number(`0x${userRange[0]}`),
+            to: Number(`0x${userRange[1]}`),
+            len: Number(`0x${userRange[1]}`) - Number(`0x${userRange[0]}`)
+        }
+        let selection = $("input:radio[class='utfBlk']:checked").attr("id");
+        let utfBlock = {};
+        if (selection == "smilies") {
+            utfBlock = emojiBlock;
+        } else if (selection == "pictograms") {
+            utfBlock = pictoBlock;
+        } else {
+            try {
+                if (isNaN(parseInt(utfRange.from, 16)) || isNaN(parseInt(utfRange.to, 16))) {
+                    throw "Not a valid unicode hex-range";
+                } else {
+                    utfBlock = utfRange;
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        return utfBlock;
+    }
+
+    loadRaster(block) {
+        $("#utfRaster").remove();
+        $("<div id='utfRaster'></div>").insertAfter(".puzzle");
+        for (let i = block.from; i <= block.to; i++) {
+            $("#utfRaster").append(`<span class="icon" title="${i.toString(16).toUpperCase()}" value=${i}>${String.fromCodePoint(i)}\u2000</span>`);
+        }
     }
 
     get row() {
@@ -68,12 +186,14 @@ export class Controller {
 
         $("#rnd").on("click", () => {
             $("#info").html("");
+            $("#utfRaster").css({ "display": "none" });
             this.sliceImg(true, false);
         });
 
         $("#readFile").on('change', () => {
             this.previewFile((res) => {
                 this.img = res;
+                $("#utfRaster").css({ "display": "none" });
                 this.sliceImg(false, true);
             });
         });
@@ -178,11 +298,6 @@ export class Controller {
         var height = this.img.height / ratio;
 
 
-        $('#fullIMG').css({
-            "display": "none",
-            "width": `${width}px`,
-            "height": `${height}px`
-        });
         $('.puzzle').css({
             "position": "relative",
             "width": `${width}px`,
@@ -207,6 +322,11 @@ export class Controller {
             }
         }
         $(".puzzle").html(tileSet);
+        $(".puzzle").css({
+            "position": "relative",
+            "left": "50%",
+            "transform": "translateX(-50%)"
+        });
         $('.tile').css({
             "width": `${Math.floor(width / this.col)}px`,
             "height": `${Math.floor(height / this.row)}px`,
