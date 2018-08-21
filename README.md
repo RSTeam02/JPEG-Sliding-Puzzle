@@ -1,6 +1,7 @@
 # Rectangular Sliding-Puzzle
 
 Extend previous project (Image-Slicer) into a Sliding Puzzle game
++ 21.08: adapt/adjust size of the whole puzzle, dependent on browser window size/screen resolution (responsive resizing)
 + 20.08: use unicode symbols, pictograms as puzzle layout (reused from previous project) choose one from "unicode-gallery"=> convert into a canvas image to slice in pieces
 + 20.08: center whole canvas
 + 24.06: additional preview images added random selection, when restarted (F5)

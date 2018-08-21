@@ -21,8 +21,7 @@ export class Controller {
     constructor() {
         this.btnListener();
         this.tileLock = false;
-        $(".puzzle").before('<canvas id ="cssContent" width="640" height="640"></canvas>');
-        this.resize();
+        $(".puzzle").before('<canvas id ="cssContent" width="1024px" height="1024px"></canvas>');
         this.resizeListener();
         this.utfBlockListener();
         this.rangeListener();
@@ -71,20 +70,21 @@ export class Controller {
 
     unicodeLoader(codePoint) {
         var imgCtx = document.getElementById('cssContent').getContext('2d');
-        imgCtx.clearRect(0, 0, 640, 640);
-        imgCtx.font = "640px serif";
-        imgCtx.fillText(String.fromCodePoint(codePoint), 0, 560);
+        imgCtx.clearRect(0, 0, 1024, 1024);
+        imgCtx.font = "1024px serif";
+        imgCtx.fillText(String.fromCodePoint(codePoint), 0, 895);
         let previewImg = new Image();
         previewImg.src = imgCtx.canvas.toDataURL();
         previewImg.onload = (e) => {
             this.img = previewImg;
             this.sliceImg(false, true);
+
         }
     }
 
     resizeListener() {
         $(window).resize(() => {
-            this.resize();
+            this.resizePuzzle();
         });
     }
 
@@ -98,13 +98,6 @@ export class Controller {
         });
     }
 
-    resize() {
-        var height = $(window).height();
-        var width = $(window).width();
-        var size = 0;
-        size = (height > width) ? window.innerWidth : window.innerHeight
-        $("#cssContent").css("font-size", size);
-    }
 
     utfSelect() {
         let emojiBlock = {
@@ -216,14 +209,14 @@ export class Controller {
             let clickY = coordClick[1];
             let gapX = 0;
             let gapY = 0;
-            let coordGap = [];
+            let coordGap = [];           
             for (let i = 0; i < this.tile.length; i++) {
                 if ($(this.tile[i]).attr("value") === "gap") {
                     coordGap = this.tile[i].id.split("");
                     gapX = coordGap[0];
                     gapY = coordGap[1];
                     let abs = this.dist(clickX, clickY, gapX, gapY)
-                    if (abs.absDist == 1) {
+                    if (abs.absDist == 1) {                   
                         this.tileAnimate(this.tile[i].id, curr, abs.direction);
                     }
                 }
@@ -269,14 +262,9 @@ export class Controller {
         }
     }
 
-    sliceImg(rnd, lastTile) {
-        let tm = new TileMatrix();
-        let arr = tm.createTileMat(this.row, this.col);
-        let shuffle = new Shuffle();
-        let shuffled = shuffle.randomOrder(arr, rnd);
-        $("#dimInfo").html(`Format: ${this.row}x${this.col}`);
-        var width = this.img.width;
-
+    //resolution modes dependent on screen size
+    resMode() {
+        var width = 0
 
         if (window.innerWidth >= 1920) {
             width = 1680;
@@ -293,17 +281,45 @@ export class Controller {
         } else {
             width = 320;
         }
+        //if landscape and square format, resize to 75%
+        if (window.innerWidth > window.innerHeight && this.img.width === this.img.height) {
+            width = width * 3 / 4;
+        }
+        return width;
+    }
 
+    //called by resizeListener
+    resizePuzzle() {
+        var tWidth = 0;
+        var tNo = 0;
+        var tHeight = 0;
+        var width = this.resMode();
         var ratio = this.img.width / width;
         var height = this.img.height / ratio;
+        this.puzzleTileSize(width, height);
 
+        for (var i = 0; i < this.row; i++) {
+            tWidth = 0;
+            for (var j = 0; j < this.col; j++) {
+                $(`.tile.t${tNo}`).css({
+                    "background-position": `${Math.floor(tWidth)}px ${Math.floor(tHeight)}px`
+                });
+                tWidth -= (width / this.col);
+                tNo++;
+            }
+            tHeight -= (height / this.row);
+        }
+    }
 
-        $('.puzzle').css({
-            "position": "relative",
-            "width": `${width}px`,
-            "height": `${height}px`
-        });
-
+    sliceImg(rnd, lastTile) {
+        let tm = new TileMatrix();
+        let arr = tm.createTileMat(this.row, this.col);
+        let shuffle = new Shuffle();
+        let shuffled = shuffle.randomOrder(arr, rnd);
+        $("#dimInfo").html(`Format: ${this.row}x${this.col}`);
+        var width = this.resMode()
+        var ratio = this.img.width / width;
+        var height = this.img.height / ratio;
         this.buildTile(width, height, shuffled, lastTile);
         this.tileListener();
     }
@@ -322,20 +338,7 @@ export class Controller {
             }
         }
         $(".puzzle").html(tileSet);
-        $(".puzzle").css({
-            "position": "relative",
-            "left": "50%",
-            "transform": "translateX(-50%)"
-        });
-        $('.tile').css({
-            "width": `${Math.floor(width / this.col)}px`,
-            "height": `${Math.floor(height / this.row)}px`,
-            "float": "left",
-            "position": "relative",
-            "background-image": `url(${this.img.src})`,
-            "background-size": `${width}px ${height}px`
-        });
-
+        this.puzzleTileSize(width, height);
         for (var i = 0; i < this.row; i++) {
             tWidth = 0;
             for (var j = 0; j < this.col; j++) {
@@ -352,6 +355,24 @@ export class Controller {
             $(`.tile.t${this.row * this.col - 1}`).css({ "opacity": 0 });
             $(`.tile.t${this.row * this.col - 1}`).attr("value", "gap");
         }
+    }
+
+    puzzleTileSize(width, height){        
+        $(".puzzle").css({
+            "position": "relative",
+            "width": `${width}px`,
+            "height": `${height}px`,
+            "left": "50%",
+            "transform": "translateX(-50%)"
+        });
+        $('.tile').css({
+            "width": `${Math.floor(width / this.col)}px`,
+            "height": `${Math.floor(height / this.row)}px`,
+            "float": "left",
+            "position": "relative",
+            "background-image": `url(${this.img.src})`,
+            "background-size": `${width}px ${height}px`
+        });
     }
 
     //animate every tile related to direction (lock tiles), swap after completion (unlock tiles)   
