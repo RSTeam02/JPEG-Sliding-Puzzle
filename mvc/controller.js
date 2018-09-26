@@ -25,9 +25,19 @@ export class Controller {
         this.resizeListener();
         this.utfBlockListener();
         this.rangeListener();
-        this.initRaster();
+        //this.initRaster();
         this.keyListener();
         this.aniSpeed();
+        let imgArr = ["./images/starpoly13.gif", "./images/IMG_0536.JPG", "./images/IMG_0548.JPG", "./images/IMG_0556.JPG"];
+        let rnd = Math.floor(Math.random() * imgArr.length);      
+        let previewImg = new Image();
+        previewImg.src = imgArr[rnd];
+        this.img = previewImg;
+        this.sliceImg(false, true);
+        previewImg.onload = (e) => {       
+            this.img = previewImg;
+            this.sliceImg(false, true);
+        }       
     }
 
     keyListener() {
@@ -48,7 +58,7 @@ export class Controller {
     }
 
     utfBlockListener() {
-        $(".utfBlk").on("click", () => {
+        $(".loadUtf").on("click", () => {
             let block = this.utfSelect();
             $("#uc").attr("min", block.from);
             $("#uc").attr("max", block.to);
@@ -57,7 +67,10 @@ export class Controller {
             this.loadRaster(block);
             this.utfRasterListener();
         });
+    
     }
+
+   
 
     utfRasterListener() {
         $(".icon").on("click", (e) => {
@@ -100,16 +113,7 @@ export class Controller {
 
 
     utfSelect() {
-        let emojiBlock = {
-            from: 0x1F600,
-            to: 0x1F64F,
-            len: Number(0x1F64F) - Number(0x1F600)
-        }
-        let pictoBlock = {
-            from: 0x1F300,
-            to: 0x1F5FF,
-            len: Number(0x1F5FF) - Number(0x1F300)
-        }
+
         let userRange = $("#utfFromTo").val().split("-");
         let utfRange = {
             from: Number(`0x${userRange[0]}`),
@@ -118,21 +122,17 @@ export class Controller {
         }
         let selection = $("input:radio[class='utfBlk']:checked").attr("id");
         let utfBlock = {};
-        if (selection == "smilies") {
-            utfBlock = emojiBlock;
-        } else if (selection == "pictograms") {
-            utfBlock = pictoBlock;
-        } else {
-            try {
-                if (isNaN(parseInt(utfRange.from, 16)) || isNaN(parseInt(utfRange.to, 16))) {
-                    throw "Not a valid unicode hex-range";
-                } else {
-                    utfBlock = utfRange;
-                }
-            } catch (error) {
-                console.log(error)
+
+        try {
+            if (isNaN(parseInt(utfRange.from, 16)) || isNaN(parseInt(utfRange.to, 16))) {
+                throw "Not a valid unicode hex-range";
+            } else {
+                utfBlock = utfRange;
             }
+        } catch (error) {
+            console.log(error)
         }
+
         return utfBlock;
     }
 
@@ -209,14 +209,14 @@ export class Controller {
             let clickY = coordClick[1];
             let gapX = 0;
             let gapY = 0;
-            let coordGap = [];           
+            let coordGap = [];
             for (let i = 0; i < this.tile.length; i++) {
                 if ($(this.tile[i]).attr("value") === "gap") {
                     coordGap = this.tile[i].id.split("");
                     gapX = coordGap[0];
                     gapY = coordGap[1];
                     let abs = this.dist(clickX, clickY, gapX, gapY)
-                    if (abs.absDist == 1) {                   
+                    if (abs.absDist == 1) {
                         this.tileAnimate(this.tile[i].id, curr, abs.direction);
                     }
                 }
@@ -357,7 +357,7 @@ export class Controller {
         }
     }
 
-    puzzleTileSize(width, height){        
+    puzzleTileSize(width, height) {
         $(".puzzle").css({
             "position": "relative",
             "width": `${width}px`,
