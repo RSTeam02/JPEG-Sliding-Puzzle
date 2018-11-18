@@ -20,6 +20,36 @@
         #utfRaster {
             cursor: pointer;
         }
+        .range {
+            -webkit-appearance: none;
+            width: 50%;
+            height: 10px;
+            border-radius: 5px;
+            background: black;
+            outline: none;
+            opacity: .5;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+        .range:hover{
+            opacity: 1;
+        }
+
+        .range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 25px;          
+            background: grey;
+            cursor: pointer;
+        }
+        
+        .range::-moz-range-thumb {
+            width: 15px;
+            height: 25px;
+            background: grey;         
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -44,8 +74,8 @@
     <fieldset>
         <legend id="dimInfo">Format:</legend>
         Rows:
-        <input class="MxN" type="range" min="2" max="10" value="2" id="row" /> Cols:
-        <input class="MxN" type="range" min="2" max="10" value="2" id="col" />
+        <input class="MxN" type="range" min="2" max="10" value="2" id="row" class="range" /> Cols:
+        <input class="MxN" type="range" min="2" max="10" value="2" id="col" class="range"/>
     </fieldset>
     <fieldset>
         <legend>Shuffle Tiles</legend>
