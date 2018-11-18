@@ -50,6 +50,10 @@
             background: grey;         
             cursor: pointer;
         }
+        input#speed1, input#speed2, input#ani{
+            width: 1.5em;
+            height: 1.5em;
+        }
     </style>
 </head>
 
@@ -87,9 +91,9 @@
         <input type="button" id="rnd" value="shuffle" />
         <input type="button" id="undo" value="reset" />
         <br>animate
-        <input type="checkbox" id="ani" /> fast
-        <input type='radio' class='speed' id='speed1' name='speed' value='fast' checked/> slow
-        <input type='radio' class='speed' id='speed2' name='speed' value='slow' />
+        <input type="checkbox" id="ani" /><label for="ani"></label> fast
+        <input type='radio' class='speed' id='speed1' name='speed' value='fast' checked/><label for="speed1"></label> slow
+        <input type='radio' class='speed' id='speed2' name='speed' value='slow' /><label for="speed2"></label>
     </fieldset>
 
     <div id="info"></div>
